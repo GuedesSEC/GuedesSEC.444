@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <link rel="icon" type="image/png" href="img/banner/p.png.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuedesSEC</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.7);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-card {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+            padding: 32px 24px;
+            min-width: 320px;
+            max-width: 90vw;
+            animation: modalFadeIn 0.3s;
+            position: relative;
+        }
+        @keyframes modalFadeIn {
+            from { transform: translateY(40px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-card h2 {
+            margin-bottom: 18px;
+            color: #222;
+            font-size: 1.5em;
+        }
+        .modal-list {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 24px;
+        }
+        /* Estilização moderna para itens das pastas nos modais */
+        .modal-list li {
+            background: #181818;
+            color: #00ff00;
+            font-weight: bold;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            margin-bottom: 10px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #00ff0022;
+            display: flex;
+            align-items: center;
+            transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+            cursor: pointer;
+            border: 1px solid #00ff00;
+        }
+        .modal-list li:hover {
+            background: #222;
+            box-shadow: 0 4px 16px #00ff0044;
+            transform: scale(1.03);
+        }
+        .modal-list i {
+            margin-right: 12px;
+            color: #00ff00;
+            font-size: 1.3em;
+            transition: color 0.2s;
+        }
+        .modal-list a {
+            color: #00ff00;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1em;
+            transition: text-shadow 0.2s;
+        }
+        .modal-list a:hover {
+            text-shadow: 0 0 8px #00ff00;
+        }
+        .modal-close {
+            position: absolute;
+            top: 12px; right: 16px;
+            background: none;
+            border: none;
+            font-size: 1.4em;
+            color: #888;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .modal-close:hover {
+            color: #007bff;
+        }
+        .category-icon i {
+            font-size: 50px;
+        }
+        .modal-back {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            display: none;
+        }
+        .electric-border {
+            border: 2px solid #00ff00 !important;
+            border-radius: 16px;
+            box-shadow: none !important;
+        }
+
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+           
+        }
+
+        .fade-in-msg {
+            opacity: 0;
+            animation: fadeInMsg 1.2s forwards;
+        }
+        @keyframes fadeInMsg {
+            to { opacity: 1; }
+        }
+
+        .test-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(24,24,24,0.85);
+            border-radius: 18px;
+            box-shadow: 0 4px 24px #00ff0033;
+            padding: 18px 24px 24px 24px;
+            margin-bottom: 12px;
+            transition: box-shadow 0.3s, transform 0.2s;
+        }
+        .test-card:hover {
+            box-shadow: 0 8px 32px #00ff00, 0 0 32px #00ff0044;
+            transform: translateY(-4px) scale(1.04);
+        }
+        .test-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #00ff00;
+            color: #181818;
+            font-weight: bold;
+            font-size: 1.1em;
+            border-radius: 12px;
+            padding: 10px 28px;
+            margin-bottom: 18px;
+            text-decoration: none;
+            box-shadow: 0 2px 8px #00ff0044;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+        }
+        .test-btn:hover {
+            background: #00cc00;
+            color: #fff;
+            box-shadow: 0 4px 16px #00ff00;
+        }
+        .test-btn i {
+            margin-right: 8px;
+            font-size: 1.2em;
+        }
+        .test-img-wrap {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 0 24px #00ff00;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0;
+        }
+        .test-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #00ff00;
+            transition: transform 0.3s;
+        }
+        .test-card:hover .test-img {
+            transform: scale(1.07) rotate(-2deg);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Remova ou comente o div e script do particles-js -->
+    <!-- <div id="particles-js" ...></div>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.0/tsparticles.bundle.min.js"></script>
+    <script> ... </script> -->
+
+    <!-- Adicione o canvas para Matrix Rain -->
+    <canvas id="matrix-canvas" style="position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:-1;"></canvas>
+
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <img src="Imagens/banner/p.png.png" alt="Logo GuedesSEC" style="height:300px;">
+                <div class="logo-text">
+                    <div class="logo-name"></div>
+                    <div class="logo-tagline">Biblioteca de ALEXANDRIA</div>
+                </div>
+            </div>
+            <nav>
+                <ul>
+                    <li>
+                        <div class="social-icons">
+                            <a href="https://discord.gg/MgUc3x6nCC"><i class="fab fa-discord"></i> Discord</a>
+                            <a href="https://github.com/GuedesSEC/GuedesSEC"><i class="fab fa-github"></i> GitHub</a>
+                            <a href="https://www.instagram.com/"><i class="fab fa-instagram"></i> Instagram</a>
+                            <a href="https://wa.me/1997102-6797"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container main-content">
+        <section class="welcome-section">
+            <h1 class="typing-effect">Bem vindo à Biblioteca de Alexandria</h1>
+            <p class="fade-in-msg" style="animation-delay:2.3s;">Este é o seu centro de armazenamento pessoal para ISOs, livros, códigos e links para jogos.</p>
+            <p class="fade-in-msg" style="animation-delay:3.1s;">Organize e acesse esses recursos de forma segura e eficiente.</p>
+        </section>
+
+        <section class="categories">
+        </section>
+
+            <script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.57/build/spline-viewer.js"></script>
+    </main>
+    <main class="container main-content">
+        <section class="categories">
+            <div class="category-card electric-border">
+                <div class="category-icon">
+                    <img src="Imagens/img/isos.png" alt="ISOs" style="height:50px;">
+                </div>
+                <h3>Isos</h3>
+                <p>Uma coleção completa: sistemas operacionais, jogos e utilitários prontos para rodar. Escolha sua ISO e tenha tudo em um só lugar.</p>
+            <button onclick="openModal('modalIsos')" class="btn" style="background:#ffffff;color:#000000;font-weight:bold;">Acessar Isos</button>
+            </div>
+
+            <div class="category-card electric-border">
+                <div class="category-icon">
+                    <img src="Imagens/img/livros.png" alt="Livros" style="height:50px;">
+                </div>
+                <h3>Books</h3>
+                <p>Conhecimento nunca ocupa espaço — aqui cada página é um upgrade na sua mente.</p>
+            <button onclick="openModal('modalLivros')" class="btn" style="background:#ffffff;color:#000000;font-weight:bold;">Acessar Books</button>
+            </div>
+
+            <div class="category-card electric-border">
+                <div class="category-icon">
+                    <img src="Imagens/img/jogos.png" alt="Jogos" style="height:50px;">
+                </div>
+                <h3>Torrent</h3>
+                <p>Jogos, filmes e tudo de computaria !!!.</p>
+            <button onclick="openModal('modalJogos')" class="btn" style="background:#ffffff;color:#000000;font-weight:bold;">Acessar links Torrents</button>
+            </div>
+
+            <div class="category-card electric-border">
+                <div class="category-icon">
+                    <img src="Imagens/img/filmes.png" alt="Sites" style="height:50px;">
+                </div>
+                <h3>Sites</h3>
+                <p>Inteligência Artificial, Filmes séries, páginas de estudos.</p>
+            <button onclick="openModal('modalSites')" class="btn" style="background:hsl(0, 0%, 100%);color:#000000;font-weight:bold;">Acessar websites</button>
+            </div>
+        </section>
+
+        <div style="width:100%; display:flex; justify-content:center; gap:40px; margin-top:40px;">
+            <div class="test-card">
+                <a href="pages/Jogos web/t.i/T.i.html" target="_blank" class="test-btn">
+                    <i class="fas fa-brain"></i> Teste de TI
+                </a>
+                <div class="test-img-wrap">
+                    <img src="Imagens/img/151228-online-fraud-hacking-415p_1f4a69829f4841f440828b3b86d4a071.nbcnews-ux-2880-1000.jpg" alt="Soldado 1" class="test-img">
+                </div>
+            </div>
+            <div class="test-card">
+                <a href="pages/Jogos web/Fiscal Treinamento/Fiscal.html" target="_blank" class="test-btn">
+                    <i class="fas fa-brain"></i> Teste Fiscal
+                </a>
+                <div class="test-img-wrap">
+                    <img src="Imagens/img/contabilidade.jpg" alt="Soldado 2" class="test-img">
+                </div>
+            </div>
+        </div>
+        
+        <div id="modalIsos" class="modal-overlay">
+            <div class="modal-card">
+                <button class="modal-close" onclick="closeModal('modalIsos')">&times;</button>
+                <h2>Escolha uma categoria de ISOs</h2>
+                <button id="voltarIsos" class="modal-back" onclick="mostrarCategorias()">Voltar</button>
+                <ul class="modal-list" id="listaIsos"></ul>
+            </div>
+        </div>
+
+        <script>
+            // Estrutura de categorias com links.
+            const categorias = {
+            linux: [
+                { nome: "LinuxMit64bits", link: "https://drive.google.com/file/d/1UtcZrC33vQYB9Os4u7XtMhr30v3SF2bC/view?usp=drive_link" },
+                { nome: "ubuntu", link: "https://www.mediafire.com/file/pmrgkv40cc2ogee/ubuntu-24.04.3-desktop-amd64.iso/file" },
+                { nome: "Kali Linux", link: "https://www.mediafire.com/file/lsr4ifcpaehm6jx/kali-linux-2025.2-installer-netinst-amd64.iso/file"}
+            
+            ],
+            windows: [
+                { nome: "Windows 7 Ultimate 64bits", link: "https://drive.google.com/file/d/1ZMzjdSLNRuaDZwvZgaDzpXRFXUPb27HP/view?usp=drive_link" },
+                { nome: "Windows 10", link: "https://drive.google.com/file/d/1VJ3fZkvhAJf3pfaAc0RZ3a5ehes2suDC/view?usp=drive_link" }
+            ],
+            jogos: [
+                { nome: "GOD OF WAR 2", link: "https://drive.google.com/file/d/1QYiuKPoY9CIcRjUBZa991EraATbIV9hb/view?usp=drive_link" },
+            ]
+            };
+
+            // Mostra as categorias principais.
+            function mostrarCategorias() {
+                document.getElementById("voltarIsos").style.display = "none";
+                const lista = document.getElementById("listaIsos");
+                lista.innerHTML = `
+                <li onclick="abrirCategoria('linux')"><i class="fas fa-folder"></i> Linux</li>
+                <li onclick="abrirCategoria('windows')"><i class="fas fa-folder"></i> Windows</li>
+                <li onclick="abrirCategoria('jogos')"><i class="fas fa-folder"></i> Jogos</li>
+                `;
+            }
+
+            // Abre os downloads dentro da categoria
+            function abrirCategoria(cat) {
+                document.getElementById("voltarIsos").style.display = "inline-block";
+                const lista = document.getElementById("listaIsos");
+                lista.innerHTML = "";
+                categorias[cat].forEach(item => {
+                    lista.innerHTML += `
+                    <li>
+                        <i class="fas fa-download"></i>
+                        <a href="${item.link}" target="_blank">${item.nome}</a>
+                    </li>`;
+                });
+            }
+
+            // Fecha modal e reseta para categorias
+            function closeModal(id) {
+                document.getElementById(id).style.display = "none";
+                if(id === 'modalIsos') mostrarCategorias();
+                if(id === 'modalLivros') voltarLivros();
+                if(id === 'modalJogos') voltarJogos();
+                if(id === 'modalSites') voltarSites();
+            }
+
+            // Funções para abrir os modais
+            function openModal(id) {
+                document.getElementById(id).classList.add('active');
+            }
+
+            // Inicia na tela de categorias ao carregar
+            mostrarCategorias();
+        </script>
+
+        <div id="modalLivros" class="modal-overlay">
+            <div class="modal-card">
+                <button class="modal-close" onclick="closeModal('modalLivros')">&times;</button>
+                <h2>Escolha uma categoria de livros</h2>
+                <button id="voltarLivros" class="modal-back" onclick="voltarLivros()">Voltar</button>
+                <ul class="modal-list" id="livros-categorias">
+                    <li onclick="showLivros('programacao')"><i class="fas fa-folder"></i> Programação</li>
+                    <li onclick="showLivros('romance')"><i class="fas fa-folder"></i> Romance</li>
+                    <li onclick="showLivros('tecnologia')"><i class="fas fa-folder"></i> Ciência</li>
+                    <li onclick="showLivros('Filosofia')"><i class="fas fa-folder"></i>Filosofia</li>
+                </ul>
+                <ul class="modal-list" id="livros-arquivos" style="display:none;"></ul>
+            </div>
+        </div>
+
+        <div id="modalJogos" class="modal-overlay">
+            <div class="modal-card">
+                <button class="modal-close" onclick="closeModal('modalJogos')">&times;</button>
+                <h2>Escolha uma categoria</h2>
+                <button id="voltarJogos" class="modal-back" onclick="voltarJogos()">Voltar</button>
+                <ul class="modal-list" id="jogos-categorias">
+                    <li onclick="showJogos('acao')"><i class="fas fa-folder"></i> Jogos Pirata</li>
+                </ul>
+                <ul class="modal-list" id="jogos-arquivos" style="display:none;"></ul>
+            </div>
+        </div>
+
+        <div id="modalSites" class="modal-overlay">
+            <div class="modal-card">
+                <button class="modal-close" onclick="closeModal('modalSites')">&times;</button>
+                <h2>Escolha uma categoria de Sites</h2>
+                <button id="voltarSites" class="modal-back" onclick="voltarSites()">Voltar</button>
+                <ul class="modal-list" id="Sites-categorias">
+                    <li onclick="showSites('IA')"><i class="fas fa-folder"></i> IA</li>
+                    <li onclick="showSites('Filmes_e_Series')"><i class="fas fa-folder"></i>Filmes e Séries</li>
+                </ul>
+                <ul class="modal-list" id="Sites-arquivos" style="display:none;">Sites</ul>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container footer-content" style="display: flex; align-items: center; justify-content: center; gap: 48px;">
+            <div class="footer-logo" style="display: flex; align-items: center;">
+                <img src="Imagens/banner/p.png.png" alt="Logo GuedesSEC" style="height:100px; margin-right:16px;">
+                <div class="footer-text">
+                    <p>GuedesSEC &copy; 24/08/2025</p>
+                    <p>Dev. ArkanRoot-JM</p>
+                    <p>laissez faire 𖠂</p>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 32px;">
+                <ul style="display: flex; gap: 24px; list-style: none; padding: 0; margin: 0; font-family: 'Courier New', monospace; color: #00ff00;">
+                    <li>
+                        <a href="#" onclick="openModal('privacyModal')" style="color: #ffffff; text-decoration: none; border-bottom: 1px dashed #00ff00; transition: 0.2s;">Privacidade</a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="openModal('termsModal')" style="color: #ffffff; text-decoration: none; border-bottom: 1px dashed #00ff00; transition: 0.2s;">Termos de Uso</a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="openModal('supportModal')" style="color: #ffffff; text-decoration: none; border-bottom: 1px dashed #00ff00; transition: 0.2s;">Suporte</a>
+                    </li>
+                </ul>
+                <a href="https://buildcores.com/builds/Z9mHaNwCa" class="btn" target="_blank" style="display:inline-block; background:#ffffff; color:#000000; font-weight:bold; padding:14px 36px; border-radius:12px; font-size:1.1em; box-shadow:0 4px 16px rgba(0,0,0,0.12); text-decoration:none; margin-left:24px;">
+                    <i class="fas fa-store" style="font-size:1.3em; vertical-align:middle; margin-right:10px;"></i>
+                    MONTE SEU PC
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAIS BONITOS -->
+    <div id="privacyModal" class="modal-overlay">
+        <div class="modal-card" style="background:#181818; color:#00ff00; font-family:monospace;">
+            <button class="modal-close" onclick="closeModal('privacyModal')" style="color:#00ff00;">&times;</button>
+            <h2 style="color:#00ff00;">Política de Privacidade</h2>
+            <p>
+                Seus dados são criptografados e protegidos.<br>
+                Nenhuma informação sensível será compartilhada.<br>
+                <span style="color:#fff;">A GuedesSEC respeita sua privacidade!</span>
+            </p>
+        </div>
+    </div>
+    <div id="termsModal" class="modal-overlay">
+        <div class="modal-card" style="background:#181818; color:#00ff00; font-family:monospace;">
+            <button class="modal-close" onclick="closeModal('termsModal')" style="color:#00ff00;">&times;</button>
+            <h2 style="color:#00ff00;">Termos de Uso</h2>
+            <p>
+                Ao acessar este site, você concorda com nossos termos.<br>
+                Use com responsabilidade e ética.<br>
+                <span style="color:#fff;">Bem-vindo ao universo GuedesSEC!</span>
+            </p>
+        </div>
+    </div>
+    <div id="supportModal" class="modal-overlay">
+        <div class="modal-card" style="background:#181818; color:#00ff00; font-family:monospace;">
+            <button class="modal-close" onclick="closeModal('supportModal')" style="color:#00ff00;">&times;</button>
+            <h2 style="color:#00ff00;">Suporte</h2>
+            <p>
+                Precisa de ajuda?<br>
+                <a href="mailto:mateusjoao79509@gmail.com" target="_blank" style="color:#fff; text-decoration:underline;">
+                    Clique aqui para enviar um e-mail para o suporte
+                </a><br>
+                <span style="color:#fff;">Equipe GuedesSEC pronta para te atender!</span>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+    </script>
+    <script src="script.js"></script>
+    <script>
+    const container = document.querySelector('.lista-codigos');
+    for (let i = 1; i <= 50; i++) {
+        const div = document.createElement('div');
+        div.textContent = `CÓDIGO LIMPO ${i}`;
+        container.appendChild(div);
+    }
+    </script>
+
+    <script>
+    // Matrix Rain clássico - Binário Verde estilo antigo
+
+    const canvas = document.getElementById('matrix-canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Caracteres binários
+    const binary = ['0', '1'];
+    let fontSize = 20;
+    let columns, drops;
+
+    // Responsivo para mobile e desktop
+    function setupMatrix() {
+        fontSize = window.innerWidth < 700 ? 14 : 20;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        columns = Math.floor(canvas.width / fontSize);
+        drops = [];
+        for (let x = 0; x < columns; x++) {
+            drops[x] = Math.random() * canvas.height / fontSize;
+        }
+    }
+    setupMatrix();
+    window.addEventListener('resize', setupMatrix);
+
+    function drawMatrix() {
+        // Fundo preto semi-transparente para efeito de rastro
+        ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.font = fontSize + "px monospace";
+        ctx.fillStyle = "#00ff00";
+        for (let i = 0; i < drops.length; i++) {
+            const text = binary[Math.floor(Math.random() * binary.length)];
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+            // Reinicia a "gota" aleatoriamente
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i]++;
+        }
+    }
+
+    setInterval(drawMatrix, 40);
+    </script>
+
+<script>
+// Dados de exemplo
+const livros = {
+    programacao: [
+        { nome: "A Web Mobile - Programe para um Mundo de Muitos Dispositivos", link: "books/Programação/A Web Mobile - Programe para um Mundo de Muitos Dispositivos.pdf" },
+        { nome: "Aplicações web real time com Node-js", link: "books/Programação/Aplicações web real time com Node-js.pdf" },
+        { nome: "codigo-limpo", link: "books/Programação/codigo-limpo-completo.pdf" },
+        { nome: "CSS Eficiente - Técnicas e ferramentas que fazem a diferença nos seus estilos", link: "books/Programação/CSS Eficiente - Técnicas e ferramentas que fazem a diferença nos seus estilos.pdf" },
+        { nome: "Entendendo-Algoritmos-Um-Guia-Ilustrado-Para-Programadores-e-Outros-Curiosos", link: "books/Programação/Entendendo-Algoritmos-Um-Guia-Ilustrado-Para-Programadores-e-Outros-Curiosos-Autor-_Aditya-Y.pdf" },
+        { nome: "Lógica de Programação Crie seus primeiros programas usando Javascript e HTML", link: "books/Programação/Lógica de Programação Crie seus primeiros programas usando Javascript e HTML.pdf" },
+        { nome: "O Programador Pragmático ", link: "books/Programação/O Programador Pragmático - Autor (Andrew Hunt e David Thomas).pdf" },
+        { nome: "Web Design Responsivo - Páginas adaptáveis para todos os dispositivos", link: "books/Programação/Web Design Responsivo - Páginas adaptáveis para todos os dispositivos - Autor (Casa do Código).pdf" },
+        
+    ],
+    romance: [
+        { nome: "A-Hipotese-do-Amor", link: "books/Romance/A-Hipotese-do-Amor-Ali-Hazelwood.pdf" },
+        { nome: "Jane Eyre autor Charlotte Bronte", link: "Jane Eyre autor Charlotte Bronte" },
+        { nome: "O Pequeno Principe autor", link: "books/Romance/O Pequeno Principe autor Antoine de Saint-Exupéry.pdf" }
+    ],
+    tecnologia: [
+        { nome: "Cosmos", link: "books/Ciência/Carl Sagan - Cosmos.pdf" },
+        { nome: "Um Pálido Ponto Azul", link: "books/Ciência/Carl Sagan - Um Pálido Ponto Azul.pdf" },
+        { nome: "Orgulho e Preconceito", link: "books/Ciência/Orgulho e Preconceito autor Jane Austen.pdf" }
+   ],
+    Filosofia: [
+        { nome: "Biblia", link: "books/Filosofia hermética/BÍBLIA SAGRADA.pdf" },
+        { nome: "O Homem mais rico da babilonia", link: "books/Filosofia hermética/O-Homem-Mais-Rico-da-Babilônia.pdf" },
+        { nome: "Cabalion", link: "books/Filosofia hermética/O Caibalion Edição Definitiva e Comentada - William Arkinson.pdf" }     
+]
+        
+        
+};
+
+const jogos = {
+    acao: [
+        { nome: "Little Nightmares II", link: "https://fir3.net/loopteste" },
+        { nome: "Little Nightmares I", link: "https://fir3.net/lUXI6wt12" },
+        { nome: "Homem aranha 2 - 2023", link: "https://fir3.net/bTVinv8A" },
+        { nome: "The Last of Us Part II Remastered", link: "https://fir3.net/KW683vfQ" },
+        { nome: "Hollow Knight Silksong", link: "https://4br.me/ftbBJJ6ig" }
+        
+    ],
+    aventura: [
+        { nome: "Filmes", link: "#" }
+    ]
+};
+
+const Sites = {
+    IA: [
+        { nome: "Deepseek", link: "https://chat.deepseek.com/" },
+        { nome: "PH IND AI", link: "https://www.phind.com/" },
+        { nome: "CURSOR", link: "https://cursor.com/" },
+        { nome: "V0 DEV", link: "https://v0.app/" },
+        { nome: "Windsurf", link: "https://windsurf.com/?ref=huntscreens.com" },
+        { nome: "Tabnine AI", link: "https://www.tabnine.com/" },
+        //{ nome: "", link: "" },
+        //{ nome: "", link: "" },
+       // { nome: "", link: "" },
+       // { nome: "", link: "" }
+
+    ],
+    Filmes_e_Series: [
+        { nome: "Superflix", link: "https://superflixbr.com/home" },
+        { nome: "Hiperflix", link: "https://hypeflix.info/" }
+    ]
+};
+
+// LIVROS
+function showLivros(cat) {
+    document.getElementById("livros-categorias").style.display = "none";
+    const ul = document.getElementById("livros-arquivos");
+    ul.style.display = "block";
+    ul.innerHTML = "";
+    livros[cat].forEach(item => {
+        ul.innerHTML += `<li><i class="fas fa-book"></i> <a href="${item.link}" target="_blank">${item.nome}</a></li>`;
+    });
+    document.getElementById("voltarLivros").style.display = "inline-block";
+}
+function voltarLivros() {
+    document.getElementById("livros-categorias").style.display = "block";
+    document.getElementById("livros-arquivos").style.display = "none";
+    document.getElementById("voltarLivros").style.display = "none";
+}
+
+// JOGOS
+function showJogos(cat) {
+    document.getElementById("jogos-categorias").style.display = "none";
+    const ul = document.getElementById("jogos-arquivos");
+    ul.style.display = "block";
+    ul.innerHTML = "";
+    jogos[cat].forEach(item => {
+        ul.innerHTML += `<li><i class="fas fa-gamepad"></i> <a href="${item.link}" target="_blank">${item.nome}</a></li>`;
+    });
+    document.getElementById("voltarJogos").style.display = "inline-block";
+}
+function voltarJogos() {
+    document.getElementById("jogos-categorias").style.display = "block";
+    document.getElementById("jogos-arquivos").style.display = "none";
+    document.getElementById("voltarJogos").style.display = "none";
+}
+
+// FILMES
+function showSites(cat) {
+    document.getElementById("Sites-categorias").style.display = "none";
+    const ul = document.getElementById("Sites-arquivos");
+    ul.style.display = "block";
+    ul.innerHTML = "";
+    Sites[cat].forEach(item => {
+        ul.innerHTML += `<li><i class="fas fa-film"></i> <a href="${item.link}" target="_blank">${item.nome}</a></li>`;
+    });
+    document.getElementById("voltarSites").style.display = "inline-block";
+}
+function voltarSites() {
+    document.getElementById("Sites-categorias").style.display = "block";
+    document.getElementById("Sites-arquivos").style.display = "none";
+    document.getElementById("voltarSites").style.display = "none";
+}
+</script>
+
+</body>
+</html>
